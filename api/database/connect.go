@@ -29,6 +29,7 @@ func ConnectDB() {
 
 	DB.AutoMigrate(&model.Users{})
 	DB.AutoMigrate(&model.Containers{})
+	DB.AutoMigrate(&model.Images{})
 	DB.AutoMigrate(&model.UsedPorts{})
 
 	fmt.Println("Connected to Database successfully....!!")

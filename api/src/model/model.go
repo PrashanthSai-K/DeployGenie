@@ -14,14 +14,26 @@ type Users struct {
 	Role		string
 }
 
+type Images struct {
+	gorm.Model
+	Id			uint `gorm:"primaryKey;autoIncrement"`
+	ImageName	string
+	Tag			string
+	Size		string
+}
+
 type Containers struct {
 	gorm.Model
 	Id				uint `grom:"primaryKey;autoIncrement"`
 	ContainerId		string
 	ContainerName	string
-	UserId			uint
-	User			Users `grom:"foreignKey:UserId;references:Id`			 
+	ImageId			uint 
+	UserId			uint 
+	// Image          	Images  `gorm:"foreignKey:ImageId;references:Id"`
+	User			Users `grom:"foreignKey:UserId;references:Id"`			 
 }
+
+
 
 type UsedPorts struct {
 	gorm.Model
@@ -29,7 +41,7 @@ type UsedPorts struct {
 	Port			int
 	ContainerId		uint
 	UserId			uint
-	Container	Containers `grom:"foreignKey:ContainerId;references:Id`
+	Container		Containers `grom:"foreignKey:ContainerId;references:Id`
 	User			Users `grom:"foreignKey:UserId;references:Id`			 
 }
 

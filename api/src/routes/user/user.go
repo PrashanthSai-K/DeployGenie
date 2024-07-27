@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func SetUpRoutes(router fiber.Router) {
+func SetUpUserRoutes(router fiber.Router) {
 
 	user := router.Group("/user")
 
