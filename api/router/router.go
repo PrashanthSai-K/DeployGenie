@@ -1,6 +1,7 @@
 package router
 
 import (
+	authRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/auth"
 	containerRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/container"
 	userRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/user"
 	"github.com/gofiber/fiber/v2"
@@ -19,4 +20,6 @@ func SetUpRoutes(app *fiber.App) {
 	userRoutes.SetUpUserRoutes(api)
 
 	containerRoutes.SetUpContainerRoutes(api)
+
+	authRoutes.SetUpAuthRoutes(api)
 }

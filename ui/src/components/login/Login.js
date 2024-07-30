@@ -1,7 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { ReactComponent as Logo } from "./Market launch-rafiki.svg"
+import { ErrorNotify, postRequest, SuccessNotify } from '../others/extras';
+import { redirect, useNavigate } from 'react-router-dom';
 
 function Login() {
+
+    const [message, setMessage] = useState();
+    const [error, setError] = useState();
+    const navigate = useNavigate();
+
+    const clearNotify = (url) => {
+        setTimeout(() => {
+            setMessage();
+            setError();
+            navigate(url)
+
+        }, 3000)
+    }
 
     const data = {
         UserName: "",
@@ -10,17 +25,39 @@ function Login() {
 
     const [formData, setFormData] = useState(data);
 
-    const handleChange =(e)=>{
-        setFormData({...formData,[e.target.name]:e.target.value})
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value })
     }
 
-    const handleSubmit=(e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
+        try {
+            const response = await postRequest("/api/auth/login", formData);
+            console.log(response);
+            if(response.status === 202){
+                if(response.data.admin){
+                    localStorage.setItem("adminKey", response.data.token)
+                    setMessage("Login Successful !!")
+                    clearNotify("/admin");
+                }else{
+                    localStorage.setItem("userKey", response.data.token)
+                    setMessage("Login Successful !!")
+                    clearNotify("/user");
+                }
+            }
+        } catch (error) {
+            if (error) {
+                setError(error.response.data.message);
+                clearNotify();
+            }
+        }
     }
 
     return (
         <>
+            {message ? <SuccessNotify message={message} /> : null}
+            {error ? <ErrorNotify message={error} /> : null}
+
             <div className='bg-gray-100 h-screen w-full flex items-center px-5 justify-center' >
                 <div className='bg-white md:w-4/6 rounded-2xl lg:h-4/6 overflow-hidden flex border border-dark-blue'>
                     <div className=' w-1/2 h-full bg-white hidden lg:block'>
