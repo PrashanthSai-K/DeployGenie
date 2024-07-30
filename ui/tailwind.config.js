@@ -9,6 +9,9 @@ module.exports = {
       },
       height:{
         '89':'89%',
+      },
+      fontSize:{
+        'xxs' : '0.5rem'
       }
     },
   },

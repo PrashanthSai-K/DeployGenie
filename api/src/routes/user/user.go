@@ -14,4 +14,11 @@ func SetUpUserRoutes(router fiber.Router) {
 	user.Get("/", userHandler.GetUsers)
 
 	user.Put("/", userHandler.UpdateUser)
+
+	user.Post("/approve", userHandler.ApproveUser)
+
+	user.Post("/reject", userHandler.RejectUser)
+
+	user.Post("/inactive", userHandler.InactiveUser)
+
 }

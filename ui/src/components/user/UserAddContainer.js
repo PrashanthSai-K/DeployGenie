@@ -54,9 +54,10 @@ function UserAddContainer() {
                                             <select type="text" name="full_name" id="full_name" class="h-10 border mt-1 rounded px-4 w-full bg-gray-50" value="" >
                                                 <option value="">Select type</option>
                                                 <option value="">Database</option>
-                                                <option value="">Virtual Machine</option>
+                                                <option value="">OS</option>
                                             </select>
                                         </div>
+
                                         <div class="md:col-span-2">
                                             <div className='flex items-center gap-2'>
                                                 <label for="full_name">Image required<span className='text-red-600'>*</span></label>
@@ -72,7 +73,9 @@ function UserAddContainer() {
                                                 <option value="">Mysql</option>
                                                 <option value="">MongoDB</option>
                                                 <option value="">Redis</option>
-                                            </select>                                        </div>
+                                            </select>
+                                        </div>
+
                                         <div class="md:col-span-5">
                                             <div className='flex items-center gap-2'>
                                                 <label for="full_name">Conatiner Name<span className='text-red-600'>*</span></label>

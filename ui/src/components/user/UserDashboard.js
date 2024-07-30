@@ -5,7 +5,8 @@ function UserDashboard() {
   return (
     <>
       <UserSidebar />
-      <div className='ml-2 sm:ml-72 sm:mt-24'>
+      <div className='ml-2  sm:ml-72 mt-24'>
+        {/* Bread Crumbs */}
         <div className='bg-gray-300 p-1  rounded-lg mr-2 flex items-center gap-2'>
           <div className='flex items-center justify-start gap-2'>
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
@@ -21,6 +22,7 @@ function UserDashboard() {
             <span>Dashboard</span>
           </div>
         </div>
+        {/* Statistics cards */}
         <div className='flex flex-wrap gap-3 pt-5 items-center justify-center'>
           <div className='relative w-72 h-24 rounded-lg border border-dark-blue'>
             <div className='absolute top-2 left-3'>
