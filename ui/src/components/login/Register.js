@@ -60,7 +60,7 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await postRequest("/api/user", formData);
+            const response = await postRequest("/v1/api/user", formData);
             if (response.status === 202) {
                 setMessage("Created Successfully, wait till admin approves");
                 clearNotify();

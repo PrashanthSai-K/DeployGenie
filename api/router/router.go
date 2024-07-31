@@ -10,7 +10,7 @@ import (
 
 func SetUpRoutes(app *fiber.App) {
 
-	api := app.Group("api/", logger.New())
+	api := app.Group("/v1/api/", logger.New())
 
 	api.Get("/", func(c *fiber.Ctx) error {
 		err := c.SendString(" Hiii from /api !!!")

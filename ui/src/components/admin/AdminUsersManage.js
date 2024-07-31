@@ -19,7 +19,7 @@ function AdminUsersManage() {
 
     const fetchUsers = async () => {
         try {
-            const response = await getRequest("/api/user")
+            const response = await getRequest("/v1/api/user")
             setUsers(response.data.data)
             setMain(response.data.data)
         } catch (error) {
@@ -29,7 +29,7 @@ function AdminUsersManage() {
 
     const ApproveUser = async (user) => {
         try {
-            const response = await postRequest("/api/user/approve", user);
+            const response = await postRequest("/v1/api/user/approve", user);
             if (response) {
                 setMessage("User Approved Successfully");
                 fetchUsers();
@@ -44,7 +44,7 @@ function AdminUsersManage() {
 
     const RejectUser = async (user) => {
         try {
-            const response = await postRequest("/api/user/reject", user);
+            const response = await postRequest("/v1/api/user/reject", user);
             if (response) {
                 setMessage("User Rejected Successfully");
                 fetchUsers();
@@ -59,7 +59,7 @@ function AdminUsersManage() {
 
     const InactiveUser = async (user) => {
         try {
-            const response = await postRequest("/api/user/inactive", user);
+            const response = await postRequest("/v1/api/user/inactive", user);
             if (response) {
                 setMessage("User disabled successfully");
                 fetchUsers();

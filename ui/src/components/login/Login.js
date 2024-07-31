@@ -32,7 +32,7 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await postRequest("/api/auth/login", formData);
+            const response = await postRequest("/v1/api/auth/login", formData);
             console.log(response);
             if(response.status === 202){
                 if(response.data.admin){
@@ -52,6 +52,7 @@ function Login() {
             }
         }
     }
+
 
     return (
         <>

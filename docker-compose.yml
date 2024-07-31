@@ -1,0 +1,20 @@
+version: '2.29'
+
+services:
+  api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    volumes:
+      - ./api:/api
+    ports:
+      - 45000:3500
+  
+  ui:
+    build: 
+      context: ./ui
+      dockerfile: Dockerfile
+    volumes:
+      - ./ui:/app
+    ports:
+      - 3001:3000
