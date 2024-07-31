@@ -92,7 +92,7 @@ function Login() {
                                     Password
                                 </label>
                             </div>
-                            <button href="#_" className="relative w-32 border border-dark-blue text-center p-2 overflow-hidden font-medium transition-all bg-dark-blue rounded-full hover:bg-white group">
+                            <button type='submit' className="relative w-32 border border-dark-blue text-center p-2 overflow-hidden font-medium transition-all bg-dark-blue rounded-full hover:bg-white group">
                                 <span className="absolute inset-0 border-0 group-hover:border-[25px] ease-linear duration-100 transition-all border-white rounded-full"></span>
                                 <span className="relative w-full text-left text-white transition-colors duration-200 ease-in-out group-hover:text-dark-blue">Login</span>
                             </button>

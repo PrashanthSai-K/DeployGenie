@@ -1,6 +1,17 @@
 version: '2.29'
 
 services:
+  nginx:
+    image: nginx:latest
+    container_name: deploy_nginx
+    ports:
+      - "3501:80"
+    volumes:
+      - ./nginx/.nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - api
+      - ui
+
   api:
     build:
       context: ./api
