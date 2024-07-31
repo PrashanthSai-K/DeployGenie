@@ -2,23 +2,22 @@ version: '2.29'
 
 services:
   api:
-    build: 
+    build:
       context: ./api
       dockerfile: Dockerfile
     volumes:
       - ./api:/api
     environment:
-      - DB_HOST: localhost
-      - DB_NAME: deploy
-      - DB_USER: root
-      - DB_PASSWORD: password
-      - DB_PORT: 3306
-      - DB_NAME: deploy
+      DB_HOST: 10.30.10.12
+      DB_NAME: deploy
+      DB_USER: root
+      DB_PASSWORD: password
+      DB_PORT: 3306
     ports:
-      - 45000:3500
-  
+      - 4500:3500
+
   ui:
-    build: 
+    build:
       context: ./ui
       dockerfile: Dockerfile
     volumes:
