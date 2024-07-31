@@ -1,16 +1,14 @@
-FROM node:lts-alpine3.20
+FROM node:lts-alpine3.20 AS Build
 
 WORKDIR /app
-
 COPY package.json package.json
-
 RUN npm install
-
 COPY . .
+RUN npm run build
 
-RUN npm install
 
-EXPOSE 3000
+FROM nginx:alpine
 
-CMD [ "npm", "start" ]
+COPY --from=build /app/build /usr/share/nginx/html
+EXPOSE 80
 
