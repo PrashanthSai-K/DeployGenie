@@ -21,7 +21,7 @@ FROM scratch
 
 # Copy binary and config files from /build 
 # to root folder of scratch container.
-COPY --from=builder ["/api/server", "/api/.env", "/"]
+COPY --from=builder ["/api/server", "/"]
 
 # Export necessary port.
 EXPOSE 3500
