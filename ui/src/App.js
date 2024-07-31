@@ -7,11 +7,14 @@ import UserAddContainer from './components/user/UserAddContainer';
 import UserManageContainer from './components/user/UserManageContainer';
 import Register from './components/login/Register';
 import AdminUsersManage from './components/admin/AdminUsersManage';
+import Demo from './components/Demo';
 
 function App() {
   return (
     <>
       <Routes>
+        <Route path='*' element={<Demo />} />
+
         <Route path="/" element={<Login />} />
         <Route path='/register' element={<Register />} />
 

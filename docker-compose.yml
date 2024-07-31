@@ -5,8 +5,6 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    volumes:
-      - ./api:/api
     environment:
       DB_HOST: 10.30.10.12
       DB_NAME: deploy
@@ -20,7 +18,5 @@ services:
     build:
       context: ./ui
       dockerfile: Dockerfile
-    volumes:
-      - ./ui:/app
     ports:
       - 3001:3000
