@@ -14,6 +14,7 @@ function App() {
     <>
       <Routes>
         <Route path='*' element={<Demo />} />
+        <Route path='/deploy' element={<Demo />} />
 
         <Route path="/" element={<Login />} />
         <Route path='/register' element={<Register />} />
