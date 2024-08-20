@@ -41,10 +41,10 @@ func CreateUser(c *fiber.Ctx) error {
 	result = db.Create(&user)
 
 	if result.RowsAffected > 0 {
-		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"status":"success"})
+		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"status": "success"})
 	}
 
-	return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"status": "failed", "message":"Some internal error, try after some time"})
+	return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"status": "failed", "message": "Some internal error, try after some time"})
 }
 
 func GetUsers(c *fiber.Ctx) error {
@@ -100,20 +100,26 @@ func ApproveUser(c *fiber.Ctx) error {
 
 	user := new(model.Users)
 
-	db := database.DB;
-	
+	db := database.DB
+
 	err := c.BodyParser(user)
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message" : "Some internal error"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Some internal error"})
 	}
 
 	oldUser := new(model.Users)
 
-	result := db.Find(oldUser, user)
+	result := db.Where(&model.Users{Id: user.Id}).First(&oldUser)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message" : "User Not Found"})
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message": "User Not Found"})
+	}
+
+	fmt.Println(oldUser.Status, "   ", oldUser.UserName)
+
+	if oldUser.Status != "PENDING" && oldUser.Status != "INACTIVE" {
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message": "Ivalid User Status"})
 	}
 
 	oldUser.Status = "ACTIVE"
@@ -121,30 +127,35 @@ func ApproveUser(c *fiber.Ctx) error {
 	result = db.Save(&oldUser)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message" : "Database error try after some time"})
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message": "Database error try after some time"})
 	}
 
-	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"success":"User approved successfully"})
+	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"success": "User approved successfully"})
 }
 
 func RejectUser(c *fiber.Ctx) error {
 
 	user := new(model.Users)
 
-	db := database.DB;
-	
+	db := database.DB
+
 	err := c.BodyParser(user)
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message" : "Some internal error"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Some internal error"})
 	}
 
 	oldUser := new(model.Users)
 
-	result := db.Find(oldUser, user)
+	result := db.Where(&model.Users{Id: user.Id}).First(&oldUser)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message" : "User Not Found"})
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message": "User Not Found"})
+	}
+	fmt.Println(oldUser.UserName,"    ", oldUser.Status)
+
+	if oldUser.Status != "PENDING" {
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message": "Ivalid User Status"})
 	}
 
 	oldUser.Status = "REJECTED"
@@ -152,30 +163,34 @@ func RejectUser(c *fiber.Ctx) error {
 	result = db.Save(&oldUser)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message" : "Database error try after some time"})
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message": "Database error try after some time"})
 	}
 
-	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"success":"User approved successfully"})
+	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"success": "User Rejected successfully"})
 }
 
 func InactiveUser(c *fiber.Ctx) error {
 
 	user := new(model.Users)
 
-	db := database.DB;
-	
+	db := database.DB
+
 	err := c.BodyParser(user)
 
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message" : "Some internal error"})
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": "Some internal error"})
 	}
 
 	oldUser := new(model.Users)
 
-	result := db.Find(oldUser, user)
+	result := db.Where(&model.Users{Id: user.Id}).First(&oldUser)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message" : "User Not Found"})
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message": "User Not Found"})
+	}
+
+	if oldUser.Status != "ACTIVE" {
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message" : "Ivalid User Status"})
 	}
 
 	oldUser.Status = "INACTIVE"
@@ -183,10 +198,10 @@ func InactiveUser(c *fiber.Ctx) error {
 	result = db.Save(&oldUser)
 
 	if result.Error != nil {
-		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message" : "Database error try after some time"})
+		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"message": "Database error try after some time"})
 	}
 
-	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"success":"User approved successfully"})
+	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"success": "User Inactivated successfully"})
 }
 
 // func ActiveUser(c *fiber.Ctx) error {
@@ -194,7 +209,7 @@ func InactiveUser(c *fiber.Ctx) error {
 // 	user := new(model.Users)
 
 // 	db := database.DB;
-	
+
 // 	err := c.BodyParser(user)
 
 // 	if err != nil {

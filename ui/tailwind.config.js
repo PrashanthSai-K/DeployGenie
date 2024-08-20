@@ -11,7 +11,8 @@ module.exports = {
         '89':'89%',
       },
       fontSize:{
-        'xxs' : '0.5rem'
+        'xxs' : '0.5rem',
+        'xms' : '0.7rem',
       }
     },
   },

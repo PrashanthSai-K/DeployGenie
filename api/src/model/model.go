@@ -29,8 +29,16 @@ type Images struct {
 type Containers struct {
 	gorm.Model
 	Id            uint `grom:"primaryKey;autoIncrement"`
+	ServiceType   string
 	ContainerId   string
 	ContainerName string
+	Reason        string
+	Outcome       string
+	Presistent    string
+	ExpiryDate    string
+	NewUser		  string
+	NewPassword	  string
+	Status        string
 	ImageId       uint
 	UserId        uint
 	Image         Images `gorm:"foreignKey:ImageId;references:Id"`
@@ -40,9 +48,30 @@ type Containers struct {
 type UsedPorts struct {
 	gorm.Model
 	Id          uint `grom:"primaryKey;autoIncrement"`
-	Port        int
+	Port        string
+	PortUsage   string
 	ContainerId uint
 	UserId      uint
 	Container   Containers `grom:"foreignKey:ContainerId;references:Id`
 	User        Users      `grom:"foreignKey:UserId;references:Id`
+}
+
+type ContainerView struct {
+	Id            uint
+	ServiceType   string
+	ContainerId   string
+	ContainerName string
+	Reason        string
+	Outcome       string
+	Presistent    string
+	ExpiryDate    string
+	Status        string
+	ImageId		  uint
+	ImageName     string
+	ImageTag      string
+	Size          string
+	UserId		  uint
+	UserEmail	  string
+	UserFirstname string
+	UserLastname  string
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { getRequest, userGetRequest } from '../others/extras';
 
 function UserSidebar() {
 
@@ -22,31 +23,44 @@ function UserSidebar() {
     }
 
     const navigate = useNavigate();
+    const [user, setUser] = useState();
+
+    const getUser = async () => {
+        try {
+            const response = await userGetRequest("/v1/api/auth/user");
+            localStorage.setItem('User', JSON.stringify(response.data.claims));
+            setUser(response.data.claims);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const validate = () => {
         const token = localStorage.getItem("userKey")
         if (token == null) {
             navigate("/")
+        } else {
+            getUser();
         }
     }
 
     const logout = () => {
         localStorage.removeItem("userKey");
         navigate("/")
-      }
+    }
 
     useEffect(() => {
         validate();
     }, [])
 
+    if(!user) return null
 
     return (
-        <>
+        <> 
             <nav className='fixed top-0 h-20 z-40 p-2 w-full '>
                 <div className='flex bg-dark-blue w-full h-full rounded-2xl items-center justify-between p-5'>
                     <div className=' flex items-center justify-center gap-3'>
                         <div
-                            // className=''
                             data-drawer-target="side-bar"
                             data-drawer-toggle="side-bar"
                             aria-controls="side-bar"
@@ -73,10 +87,9 @@ function UserSidebar() {
                                     <path d="M3 12 L8 5" stroke="black" stroke-width="1" />
                                     <path d="M8 5 L13 12" stroke="black" stroke-width="1" />
                                 </svg>
-
                             </div>
-                            <p className='text-center'>Sai K</p>
-                            <p className='text-gray-400 text-xs text-center' title='hariharan.cs21@bitsathy.ac.in'>sai@gamil.com</p>
+                            <p className='text-center'>{user.UserFirstname} {user.UserLastname}</p>
+                            <p className='text-gray-400 text-xs text-center' title='hariharan.cs21@bitsathy.ac.in'>{user.UserEmail}</p>
                             <div className='w-full pt-2 border-b border-dark-blue'></div>
                             <div className='pl-3' data-popover="popover">
                                 <button className='text-gray-600 text-sm pt-3 flex items-center  gap-2 '>
@@ -95,7 +108,7 @@ function UserSidebar() {
                                 <button
                                     className='text-gray-600 text-sm pt-3 flex items-center  gap-2 '
                                     onClick={logout}
-                                    >
+                                >
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left" viewBox="0 0 16 16">
                                         <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z" />
                                         <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z" />
@@ -110,7 +123,7 @@ function UserSidebar() {
 
             <aside
                 id='side-bar'
-                className={`rounded-xl  fixed top-0 left-0 h-5/6 sm:h-89 w-64 mt-20 z-40 bg-dark-blue transition-transform sm:translate-x-0 sm:ml-2 ${isOpen ? "translate-x-0 ml-2 " : "-translate-x-full "}`}
+                className={`rounded-xl fixed top-0 left-0 h-5/6 sm:h-89 w-64 mt-20 z-40 bg-dark-blue transition-transform sm:translate-x-0 sm:ml-2 ${isOpen ? "translate-x-0 ml-2 " : "-translate-x-full "}`}
                 aria-label="Sidebar"
             >
                 <div className='text-white h-full '>

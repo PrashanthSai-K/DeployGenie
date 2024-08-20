@@ -27,6 +27,15 @@ func ConnectDB() {
 		panic(err)
 	}
 
+	query := DB.Table("containers").
+		Select("containers.id, containers.service_type, containers.container_id, containers.container_name, containers.reason, containers.outcome, containers.presistent, containers.expiry_date, containers.status,images.id as image_id, images.image_name as image_name, images.tag as image_tag, images.size as image_size,users.id as user_id, users.user_email as user_email, users.user_firstname as user_firstname, users.user_lastname as user_lastname").
+		Joins("join images on images.id = containers.image_id").
+		Joins("join users on users.id = containers.user_id")
+
+	if err := DB.Migrator().CreateView("container_views", gorm.ViewOption{Query: query}); err != nil {
+		fmt.Println("Error creating view:", err)
+	}
+
 	DB.AutoMigrate(&model.Users{})
 	DB.AutoMigrate(&model.Containers{})
 	DB.AutoMigrate(&model.Images{})

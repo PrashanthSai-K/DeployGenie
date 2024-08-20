@@ -1,13 +1,77 @@
 import axios from "axios";
 
-const BackendUrl = '';
+const BackendUrl = 'http://localhost:3500';
+
+export async function userGetRequest(url) {
+    try {
+        const token = localStorage.getItem("userKey");
+        if (token == null) {
+            console.log("no token");
+            throw Error("No auth token");
+        }
+        const fullurl = BackendUrl + url;
+        const response = await axios.get(fullurl, { headers: { Authorization: `Bearer ${token}` } });
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function adminGetRequest(url) {
+    try {
+        const token = localStorage.getItem("adminKey");
+        if (token == null) {
+            console.log("no token");
+            throw Error("No auth token");
+        }
+        const fullurl = BackendUrl + url;
+        const response = await axios.get(fullurl, { headers: { Authorization: `Bearer ${token}` } });
+        return response
+    } catch (error) {
+        throw error
+    }
+}
+
+export async function userPostRequest(url, body) {
+    try {
+        const token = localStorage.getItem("userKey");
+        if (token == null) {
+            console.log("no token");
+            throw Error("No auth token");
+        }
+        const fullurl = BackendUrl + url
+        console.log(fullurl);
+        const response = await axios.post(fullurl, body, { headers: { Authorization: `Bearer ${token}` } });
+        return response;
+    }
+    catch (error) {
+        throw error;
+    }
+}
+
+export async function adminPostRequest(url, body) {
+    try {
+        const token = localStorage.getItem("adminKey");
+        if (token == null) {
+            console.log("no token");
+            throw Error("No auth token");
+        }
+        const fullurl = BackendUrl + url
+        console.log(fullurl);
+        const response = await axios.post(fullurl, body, { headers: { Authorization: `Bearer ${token}` } });
+        return response;
+    }
+    catch (error) {
+        throw error;
+    }
+}
 
 export async function getRequest(url) {
-    try{
+    try {
         const fullurl = BackendUrl + url;
         const response = await axios.get(fullurl);
         return response
-    }catch(error){
+    } catch (error) {
         throw error
     }
 }
@@ -38,7 +102,7 @@ export function SuccessNotify({ message }) {
     )
 }
 
-export function ErrorNotify({message}) {
+export function ErrorNotify({ message }) {
     return (
         <>
             <div className=" fixed z-40 top-24 px-2 py-2 right-3 min-w-40 border border-red-400 bg-red-200 flex items-center justify-start gap-1 rounded-lg ">

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import AdminSidebar from '../navbar/AdminSidebar'
-import { ErrorNotify, getRequest, postRequest, SuccessNotify } from '../others/extras';
+import { adminGetRequest, adminPostRequest, ErrorNotify, getRequest, postRequest, SuccessNotify } from '../others/extras';
 
 function AdminUsersManage() {
 
+    // <<<<----------Message & Error realted variables and function------------->>>>
     const [message, setMessage] = useState();
     const [error, setError] = useState();
 
@@ -14,12 +15,28 @@ function AdminUsersManage() {
         }, 5000)
     }
 
+    // <<<<----------Table Menu functianlity----------------------->>>>
+    const [dropdownVisible, setDropdownVisible] = useState(null);
+    const dropdownRef = useRef(null);
+
+    const handleActionClick = (event, userId) => {
+        event.stopPropagation();
+        setDropdownVisible(dropdownVisible === userId ? null : userId);
+    };
+
+    const handleClickOutside = (event) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+            setDropdownVisible(null);
+        }
+    };
+
     const [users, setUsers] = useState([]);
     const [main, setMain] = useState([]);
 
     const fetchUsers = async () => {
         try {
-            const response = await getRequest("/v1/api/user")
+            console.log("called");
+            const response = await adminGetRequest("/v1/api/user")
             setUsers(response.data.data)
             setMain(response.data.data)
         } catch (error) {
@@ -29,11 +46,12 @@ function AdminUsersManage() {
 
     const ApproveUser = async (user) => {
         try {
-            const response = await postRequest("/v1/api/user/approve", user);
+            const response = await adminPostRequest("/v1/api/user/approve", user);
             if (response) {
                 setMessage("User Approved Successfully");
                 fetchUsers();
                 clearNotify();
+                setDropdownVisible(null);
             }
         } catch (error) {
             console.log(error);
@@ -44,11 +62,12 @@ function AdminUsersManage() {
 
     const RejectUser = async (user) => {
         try {
-            const response = await postRequest("/v1/api/user/reject", user);
+            const response = await adminPostRequest("/v1/api/user/reject", user);
             if (response) {
                 setMessage("User Rejected Successfully");
                 fetchUsers();
                 clearNotify();
+                setDropdownVisible(null);
             }
         } catch (error) {
             console.log(error);
@@ -59,11 +78,12 @@ function AdminUsersManage() {
 
     const InactiveUser = async (user) => {
         try {
-            const response = await postRequest("/v1/api/user/inactive", user);
+            const response = await adminPostRequest("/v1/api/user/inactive", user);
             if (response) {
                 setMessage("User disabled successfully");
                 fetchUsers();
                 clearNotify();
+                setDropdownVisible(null);
             }
         } catch (error) {
             console.log(error);
@@ -89,7 +109,14 @@ function AdminUsersManage() {
     useEffect(() => {
         fetchUsers();
     }, [])
+    
 
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
 
 
     return (
@@ -124,7 +151,7 @@ function AdminUsersManage() {
 
                 <section class="pt-5 dark:bg-gray-900 w-full h-full pr-3">
                     <div class="mx-auto max-w-screen ">
-                        <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+                        <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden ">
                             <div class="flex items-center space-y-3 md:space-y-0 md:space-x-4 p-2 ">
                                 <caption class="w-full p-2 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                                     Manage Users
@@ -140,7 +167,7 @@ function AdminUsersManage() {
                                     <path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.27 3.27a.997.997 0 0 0 1.414 0l1.586-1.586a.997.997 0 0 0 0-1.414l-3.27-3.27a1 1 0 0 0-1.023-.242L10.5 9.5l-.96-.96 2.68-2.643A3.005 3.005 0 0 0 16 3q0-.405-.102-.777l-2.14 2.141L12 4l-.364-1.757L13.777.102a3 3 0 0 0-3.675 3.68L7.462 6.46 4.793 3.793a1 1 0 0 1-.293-.707v-.071a1 1 0 0 0-.419-.814zm9.646 10.646a.5.5 0 0 1 .708 0l2.914 2.915a.5.5 0 0 1-.707.707l-2.915-2.914a.5.5 0 0 1 0-.708M3 11l.471.242.529.026.287.445.445.287.026.529L5 13l-.242.471-.026.529-.445.287-.287.445-.529.026L3 15l-.471-.242L2 14.732l-.287-.445L1.268 14l-.026-.529L1 13l.242-.471.026-.529.445-.287.287-.445.529-.026z" />
                                 </svg>
                             </div>
-                            <div class="overflow-x-auto">
+                            <div class="overflow-x-auto pb-8">
                                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
@@ -177,15 +204,15 @@ function AdminUsersManage() {
                                             <th scope="col" class="px-4 py-3">
                                                 status
                                             </th>
-                                            <th scope="col" class="px-4 py-3 text-center">
-                                                Actions
+                                            <th scope="col" class="">
+                                                {/* Actions */}
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {users.length > 0 && users.map((user) => {
                                             return (
-                                                <tr class="border-b  dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                <tr class="border-b  dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600" >
                                                     <td class="w-4 px-4 py-3">
                                                         <div class="flex items-center">
                                                             <input
@@ -256,7 +283,7 @@ function AdminUsersManage() {
                                                             </div>
                                                         }
                                                     </td>
-                                                    <td class="px-4 py-3 text-center ">
+                                                    {/* <td class="px-4 py-3 text-center ">
                                                         <div className='relative flex gap-2 items-center justify-center'>
                                                             <button
                                                                 className='px-3 py-1 rounded-lg border-blue-400 border bg-blue-400 text-white hover:bg-blue-500'
@@ -295,6 +322,52 @@ function AdminUsersManage() {
                                                                 </>
                                                             }
                                                         </div>
+                                                    </td> */}
+                                                    <td class=" relative px-4 py-3 flex items-center ">
+                                                        <button
+                                                            data-dropdown-toggle="apple-imac-27-dropdown"
+                                                            onClick={(e) => handleActionClick(e, user.Id)}
+                                                            class={`inline-flex items-center p-0.5 text-sm font-medium text-center ${dropdownVisible === user.Id ? "border" : ""}  text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100`}
+                                                            type="button"
+                                                        >
+                                                            <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                            </svg>
+                                                        </button>
+
+                                                        {dropdownVisible === user.Id && (
+                                                            <div ref={dropdownRef} className="absolute -top-5 right-20  w-32 dropdown-content visible z-40 bg-white dark:bg-gray-800 shadow-md rounded-lg">
+                                                                <ul class="py-1 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="apple-imac-27-dropdown-button">
+                                                                    <li>
+                                                                        <a href="#" class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">View</a>
+                                                                    </li>
+                                                                    {
+                                                                        user.Status === "ACTIVE" &&
+                                                                        <li onClick={() => InactiveUser(user)} >
+                                                                            <a href="#" class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Inactivate</a>
+                                                                        </li>
+                                                                    }
+                                                                    {
+                                                                        user.Status === "INACTIVE" &&
+                                                                        <li onClick={() => ApproveUser(user)} >
+                                                                            <a href="#" class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Activate</a>
+                                                                        </li>
+                                                                    }
+                                                                    {
+                                                                        user.Status === "PENDING" &&
+                                                                        <li onClick={() => ApproveUser(user)}>
+                                                                            <a href="#" class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Approve</a>
+                                                                        </li>
+                                                                    }
+                                                                    {
+                                                                        user.Status === "PENDING" &&
+                                                                        <li onClick={() => RejectUser(user)} >
+                                                                            <a href="#" class="block py-1 px-4 rounded-lg text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reject</a>
+                                                                        </li>
+                                                                    }
+                                                                </ul>
+                                                            </div>
+                                                        )}
                                                     </td>
                                                 </tr>
                                             )

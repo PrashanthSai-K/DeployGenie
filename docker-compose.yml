@@ -22,12 +22,9 @@ services:
       DB_USER: root
       DB_PASSWORD: password
       DB_PORT: 3306
-    ports:
-      - 4500:3500
 
   ui:
     build:
       context: ./ui
       dockerfile: Dockerfile
-    ports:
-      - 3001:80
+

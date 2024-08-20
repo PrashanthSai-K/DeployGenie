@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
-import UserSidebar from '../navbar/UserSidebar';
-import { ErrorNotify, SuccessNotify, userGetRequest, userPostRequest } from '../others/extras';
+import { adminGetRequest, adminPostRequest, ErrorNotify, getRequest, SuccessNotify } from '../others/extras';
+import AdminSidebar from '../navbar/AdminSidebar';
 
-function UserManageContainer() {
+function AdminManageContainer() {
 
     // <<<<----------Message & Error realted variables and function------------->>>>
     const [message, setMessage] = useState();
@@ -15,28 +15,11 @@ function UserManageContainer() {
         }, 5000)
     }
 
-    const [user, setUser] = useState();
-
-    const getUser = async () => {
-        try {
-            const response = await userGetRequest("/v1/api/auth/user");
-            localStorage.setItem('User', JSON.stringify(response.data.claims));
-            setUser(response.data.claims);
-            console.log(response.data.claims);
-
-            fetchContainerData(response.data.claims.Id);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     const [containerData, setContainerData] = useState();
 
-    const fetchContainerData = async (id) => {
+    const fetchContainerData = async () => {
         try {
-            console.log(`/v1/api/container/${id}`);
-
-            const response = await userGetRequest(`/v1/api/container/${id}`);
+            const response = await getRequest("/v1/api/container");
             setContainerData(response.data.data);
         } catch (error) {
             console.log(error);
@@ -44,7 +27,7 @@ function UserManageContainer() {
     }
 
     useEffect(() => {
-        getUser();
+        fetchContainerData();
     }, [])
 
     const [dropdownVisible, setDropdownVisible] = useState(null);
@@ -68,15 +51,31 @@ function UserManageContainer() {
         };
     }, []);
 
-    const StopRequest = async (data) => {
+
+    const ApproveRequest = async (data) => {
         try {
-            const response = await userPostRequest('/v1/api/container/user/stop', data);
-            fetchContainerData(user.Id);
+            const response = await adminPostRequest('/v1/api/container/approve', data);
+            fetchContainerData();
             setMessage(response.data.message);
             clearNotify();
             setDropdownVisible(null);
         } catch (error) {
-            if (error.response) {
+            if(error.response){
+                setError(error.response.data.message);
+                clearNotify();
+            }
+        }
+    }
+
+    const StopRequest = async (data) => {
+        try {
+            const response = await adminPostRequest('/v1/api/container/stop', data);
+            fetchContainerData();
+            setMessage(response.data.message);
+            clearNotify();
+            setDropdownVisible(null);
+        } catch (error) {
+            if(error.response){
                 setError(error.response.data.message);
                 clearNotify();
             }
@@ -85,13 +84,13 @@ function UserManageContainer() {
 
     const StartRequest = async (data) => {
         try {
-            const response = await userPostRequest('/v1/api/container/user/start', data);
-            fetchContainerData(user.Id);
+            const response = await adminPostRequest('/v1/api/container/start', data);
+            fetchContainerData();
             setMessage(response.data.message);
             clearNotify();
             setDropdownVisible(null);
         } catch (error) {
-            if (error.response) {
+            if(error.response){
                 setError(error.response.data.message);
                 clearNotify();
             }
@@ -100,13 +99,28 @@ function UserManageContainer() {
 
     const TerminateRequest = async (data) => {
         try {
-            const response = await userPostRequest('/v1/api/container/user/terminate', data);
-            fetchContainerData(user.Id);
+            const response = await adminPostRequest('/v1/api/container/terminate', data);
+            fetchContainerData();
             setMessage(response.data.message);
             clearNotify();
             setDropdownVisible(null);
         } catch (error) {
-            if (error.response) {
+            if(error.response){
+                setError(error.response.data.message);
+                clearNotify();
+            }
+        }
+    }
+
+    const RejectRequest = async (data) => {
+        try {
+            const response = await adminPostRequest('/v1/api/container/reject', data);
+            fetchContainerData();
+            setMessage(response.data.message);
+            clearNotify();
+            setDropdownVisible(null);
+        } catch (error) {
+            if(error.response){
                 setError(error.response.data.message);
                 clearNotify();
             }
@@ -115,7 +129,7 @@ function UserManageContainer() {
 
     return (
         <>
-            <UserSidebar />
+            <AdminSidebar />
 
             {message ? <SuccessNotify message={message} /> : null}
             {error ? <ErrorNotify message={error} /> : null}
@@ -123,75 +137,75 @@ function UserManageContainer() {
             <div className='ml-2  sm:ml-72 mt-24'>
                 <div className='bg-gray-300 p-1  rounded-lg mr-2 flex items-center gap-2'>
                     <div className='flex items-center justify-start gap-2'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-fill" viewBox="0 0 16 16">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-house-fill" viewBox="0 0 16 16">
                             <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293z" />
                             <path d="m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293z" />
                         </svg>
                         <span>Home</span>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
                     </svg>
                     <div className='flex items-center justify-start gap-2'>
                         <span>Container</span>
                     </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-right" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fillRule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
                     </svg>
                     <div className='flex items-center justify-start gap-2'>
                         <span>Manage</span>
                     </div>
                 </div>
 
-                <section class="pt-5 dark:bg-gray-900 w-full h-full pr-3">
-                    <div class="mx-auto max-w-screen ">
-                        <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
-                            <div class="flex items-center space-y-3 md:space-y-0 md:space-x-4 p-2 ">
-                                <caption class="w-full p-2 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
+                <section className="pt-5 dark:bg-gray-900 w-full h-full pr-3">
+                    <div className="mx-auto max-w-screen ">
+                        <div className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+                            <div className="flex items-center space-y-3 md:space-y-0 md:space-x-4 p-2 ">
+                                <div className="w-full p-2 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
                                     Manage Containers
-                                </caption>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tools" viewBox="0 0 16 16">
+                                </div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-tools" viewBox="0 0 16 16">
                                     <path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.27 3.27a.997.997 0 0 0 1.414 0l1.586-1.586a.997.997 0 0 0 0-1.414l-3.27-3.27a1 1 0 0 0-1.023-.242L10.5 9.5l-.96-.96 2.68-2.643A3.005 3.005 0 0 0 16 3q0-.405-.102-.777l-2.14 2.141L12 4l-.364-1.757L13.777.102a3 3 0 0 0-3.675 3.68L7.462 6.46 4.793 3.793a1 1 0 0 1-.293-.707v-.071a1 1 0 0 0-.419-.814zm9.646 10.646a.5.5 0 0 1 .708 0l2.914 2.915a.5.5 0 0 1-.707.707l-2.915-2.914a.5.5 0 0 1 0-.708M3 11l.471.242.529.026.287.445.445.287.026.529L5 13l-.242.471-.026.529-.445.287-.287.445-.529.026L3 15l-.471-.242L2 14.732l-.287-.445L1.268 14l-.026-.529L1 13l.242-.471.026-.529.445-.287.287-.445.529-.026z" />
                                 </svg>
                             </div>
-                            <div class="overflow-x-auto pb-8">
-                                <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
-                                    <thead class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                            <div className="overflow-x-auto pb-8">
+                                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 ">
+                                    <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                                         <tr>
-                                            <th scope="col" class="p-4">
-                                                <div class="flex items-center">
+                                            <th scope="col" className="p-4">
+                                                <div className="flex items-center">
                                                     <input
                                                         id="checkbox-all"
                                                         type="checkbox"
-                                                        class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                        className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                     />
-                                                    <label for="checkbox-all" class="sr-only">
+                                                    <label htmlFor="checkbox-all" className="sr-only">
                                                         checkbox
                                                     </label>
                                                 </div>
                                             </th>
 
-                                            <th scope="col" class="px-4 py-3 ">
+                                            <th scope="col" className="px-4 py-3 ">
                                                 Container id
                                             </th>
-                                            <th scope="col" class="px-4 py-3">
+                                            <th scope="col" className="px-4 py-3">
                                                 Conatiner Name
                                             </th>
 
-                                            <th scope="col" class="px-4 py-3">
+                                            <th scope="col" className="px-4 py-3">
                                                 service type
                                             </th>
 
-                                            <th scope="col" class="px-4 py-3">
+                                            <th scope="col" className="px-4 py-3">
                                                 image name
                                             </th>
-                                            <th scope="col" class="px-4 py-3">
+                                            <th scope="col" className="px-4 py-3">
                                                 expiry date
                                             </th>
-                                            <th scope="col" class="px-4 py-3">
+                                            <th scope="col" className="px-4 py-3">
                                                 status
                                             </th>
-                                            <th scope="col" class="px-4 py-3">
+                                            <th scope="col" className="px-4 py-3">
 
                                             </th>
                                         </tr>
@@ -199,18 +213,17 @@ function UserManageContainer() {
                                     <tbody>
                                         {containerData && containerData.map((data) => {
                                             return (
-                                                <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                                    <td class="w-4 px-4 py-3">
-                                                        <div class="flex items-center">
+                                                <tr key={data.Id} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                                    <td className="w-4 px-4 py-3">
+                                                        <div className="flex items-center">
                                                             <input
                                                                 id="checkbox-table-search-1"
                                                                 type="checkbox"
-                                                                onclick="event.stopPropagation()"
-                                                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                className="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                             />
                                                             <label
-                                                                for="checkbox-table-search-1"
-                                                                class="sr-only"
+                                                                htmlFor="checkbox-table-search-1"
+                                                                className="sr-only"
                                                             >
                                                                 checkbox
                                                             </label>
@@ -218,23 +231,23 @@ function UserManageContainer() {
                                                     </td>
                                                     <th
                                                         scope="row"
-                                                        class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                                        className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                                     >
                                                         {data.Id}
                                                     </th>
-                                                    <td class="px-4 py-3 ">
+                                                    <td className="px-4 py-3 ">
                                                         {data.ContainerName}
                                                     </td>
-                                                    <td class="px-4 py-3">
+                                                    <td className="px-4 py-3">
                                                         {data.ServiceType}
                                                     </td>
-                                                    <td class="px-4 py-3 ">
+                                                    <td className="px-4 py-3 ">
                                                         {data.ImageName}
                                                     </td>
-                                                    <td class="px-4 py-3 ">
+                                                    <td className="px-4 py-3 ">
                                                         {data.ExpiryDate}
                                                     </td>
-                                                    <td class="px-4 py-3 text-center">
+                                                    <td className="px-4 py-3 text-center">
                                                         {data.Status == "pending" &&
                                                             <div className='border border-orange-400 flex items-center justify-center w-24 p-1 rounded-lg bg-orange-100 gap-2 ' >
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="orange" className="bi bi-clock" viewBox="0 0 16 16">
@@ -299,26 +312,38 @@ function UserManageContainer() {
                                                                     </li>
                                                                     {
                                                                         data.Status === "running" &&
-                                                                        <li onClick={() => StopRequest(data)}>
+                                                                        <li  onClick={()=>StopRequest(data)}>
                                                                             <a href="#" className="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Stop</a>
                                                                         </li>
                                                                     }
                                                                     {
                                                                         data.Status === "running" &&
-                                                                        <li onClick={() => TerminateRequest(data)}>
+                                                                        <li  onClick={()=>TerminateRequest(data)}>
                                                                             <a href="#" className="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Terminate</a>
                                                                         </li>
                                                                     }
                                                                     {
                                                                         data.Status === "exited" &&
-                                                                        <li onClick={() => StartRequest(data)}>
+                                                                        <li  onClick={()=>StartRequest(data)}>
                                                                             <a href="#" className="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Start</a>
                                                                         </li>
                                                                     }
                                                                     {
                                                                         data.Status === "exited" &&
-                                                                        <li onClick={() => TerminateRequest(data)}>
+                                                                        <li  onClick={()=>TerminateRequest(data)}>
                                                                             <a href="#" className="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">terminate</a>
+                                                                        </li>
+                                                                    }
+                                                                    {
+                                                                        data.Status === "pending" &&
+                                                                        <li onClick={() => ApproveRequest(data)}>
+                                                                            <a href="#" className="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Approve</a>
+                                                                        </li>
+                                                                    }
+                                                                    {
+                                                                        data.Status === "pending" &&
+                                                                        <li  onClick={()=>RejectRequest(data)}>
+                                                                            <a href="#" className="block py-1 px-4 rounded-lg text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reject</a>
                                                                         </li>
                                                                     }
                                                                 </ul>
@@ -335,11 +360,10 @@ function UserManageContainer() {
                     </div>
                 </section>
             </div>
-            {/* </div> */}
         </>
     )
 }
 
-export default UserManageContainer
+export default AdminManageContainer
 
 

@@ -53,6 +53,20 @@ function Login() {
         }
     }
 
+    const check=()=>{
+        const adminToken = localStorage.getItem("adminKey");
+        const userToken = localStorage.getItem("userKey");
+        if(adminToken) {
+            navigate("/admin");
+        }
+        if(userToken){
+            navigate("user");
+        }
+    }
+
+    useEffect(()=>{
+        check();
+    },[])
 
     return (
         <>
