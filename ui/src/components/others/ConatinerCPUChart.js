@@ -19,7 +19,7 @@ const ContainerCPUChart = ({ container_name }) => {
                         query: `rate(container_cpu_usage_seconds_total{name="${container_name}"}[5m])`,
                         start: startStamp,
                         end: endStamp,
-                        step: 30,
+                        step: 50,
                     }
                 });
                 const result = response.data.data.result[0].values;

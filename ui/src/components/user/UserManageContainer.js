@@ -295,7 +295,7 @@ function UserManageContainer() {
                                                             <div ref={dropdownRef} className="absolute -top-5 right-20  w-32 dropdown-content visible z-40 bg-white dark:bg-gray-800 shadow-md rounded-lg">
                                                                 <ul className="py-1 px-1 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="apple-imac-27-dropdown-button">
                                                                     <li>
-                                                                        <a href="#" className="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">View</a>
+                                                                        <a href={`/user/container/view/${data.ContainerName}`} className="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">View</a>
                                                                     </li>
                                                                     {
                                                                         data.Status === "running" &&

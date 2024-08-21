@@ -19,7 +19,7 @@ const ContainerMemChart = ({ container_name }) => {
                         query: `rate(container_memory_usage_bytes{name="${container_name}"}[5m])`,
                         start: startStamp,
                         end: endStamp,
-                        step: 30,
+                        step: 50,
                     }
                 });
                 const result = response.data.data.result[0].values;

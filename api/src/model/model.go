@@ -69,7 +69,7 @@ type ContainerView struct {
 	ImageId		  uint
 	ImageName     string
 	ImageTag      string
-	Size          string
+	ImageSize     string
 	UserId		  uint
 	UserEmail	  string
 	UserFirstname string
