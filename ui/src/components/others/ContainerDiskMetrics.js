@@ -13,7 +13,7 @@ function ContainerDiskMetrics() {
 
 
     const fetchNetworkData = async () => {
-        const responseTX = await axios.get(`http://localhost:9090/api/v1/query_range`, {
+        const responseTX = await axios.get(`/api/v1/query_range`, {
             params: {
                 query: 'sum(rate(container_network_transmit_bytes_total{name="saik_1_2024-08-12_12-07-41"}[5m])) by (name)',
                 start: startStamp,
@@ -21,7 +21,7 @@ function ContainerDiskMetrics() {
                 step: 50,
             }
         });
-        const responseRX = await axios.get(`http://localhost:9090/api/v1/query_range`, {
+        const responseRX = await axios.get(`/api/v1/query_range`, {
             params: {
                 query: 'sum(rate(container_network_receive_bytes_total{name="saik_1_2024-08-12_12-07-41"}[5m])) by (name)',
                 start: startStamp,
@@ -47,7 +47,7 @@ function ContainerDiskMetrics() {
 
 
     const fetchDiskData = async () => {
-        const responseReads = await axios.get(`http://localhost:9090/api/v1/query_range`, {
+        const responseReads = await axios.get(`/api/v1/query_range`, {
             params: { 
                 query: 'sum(rate(container_fs_reads_total{name="saik_1_2024-08-12_12-07-41"}[5m])) by (name)',
                 start: startStamp,
@@ -55,7 +55,7 @@ function ContainerDiskMetrics() {
                 step: 50,
             }
         });
-        const responseWrites = await axios.get(`http://localhost:9090/api/v1/query_range`, {
+        const responseWrites = await axios.get(`/api/v1/query_range`, {
             params: { 
                 query: 'sum(rate(container_fs_writes_total{name="saik_1_2024-08-12_12-07-41"}[5m])) by (name)',
                 start: startStamp,
