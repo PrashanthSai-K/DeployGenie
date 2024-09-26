@@ -22,7 +22,7 @@ Before running the project, ensure that you have the following installed:
 ### Step 1: Clone the Repository
 
 ```
-git clone https://github.com/your-repo-url/container-automation
+git clone https://github.com/PrashanthSai-K/DeployGenie.git
 cd container-automation
 ```
 
