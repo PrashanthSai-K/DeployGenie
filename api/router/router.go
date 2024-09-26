@@ -3,7 +3,7 @@ package router
 import (
 	authRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/auth"
 	containerRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/container"
-	gitlabRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/gitlab"
+	// gitlabRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/gitlab"
 	imageRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/image"
 	portRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/ports"
 	userRoutes "github.com/PrashanthSai-K/DeployGenie/api/src/routes/user"
@@ -30,6 +30,6 @@ func SetUpRoutes(app *fiber.App) {
 
 	imageRoutes.SetUPImageRoutes(api)
 
-	gitlabRoutes.SetUpGitlsbRoutes(api)
+	// gitlabRoutes.SetUpGitlsbRoutes(api)
 	
 }

@@ -14,7 +14,7 @@ const ContainerMemChart = ({ container_name }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`/api/v1/query_range`, {
+                const response = await axios.get(`http://localhost:9090/api/v1/query_range`, {
                     params: {
                         query: `rate(container_memory_usage_bytes{name="${container_name}"}[5m])`,
                         start: startStamp,

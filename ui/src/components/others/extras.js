@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BackendUrl = '';
+const BackendUrl = 'http://localhost:3500';
 
 export async function userGetRequest(url) {
     try {
