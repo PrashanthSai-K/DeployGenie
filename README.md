@@ -22,8 +22,8 @@ Before running the project, ensure that you have the following installed:
 ### Step 1: Clone the Repository
 
 ```
-git clone https://github.com/your-repo-url/container-automation
-cd container-automation
+git clone https://github.com/PrashanthSai-K/DeployGenie.git
+cd DeployGenie
 ```
 
 
@@ -76,7 +76,7 @@ docker-compose down
 
 ![Registration Form](images/register.png)
 
-![Login Form] (images/login.png)
+![Login Form](images/login.png)
 
 ### User Management
 
