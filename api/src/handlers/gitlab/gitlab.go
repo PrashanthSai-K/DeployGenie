@@ -3,7 +3,6 @@ package gitlabHandler
 import (
 	"fmt"
 	"log"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/xanzy/go-gitlab"
 )
@@ -50,7 +49,7 @@ func GetUsers(c *fiber.Ctx) error {
 func CreateProject(c *fiber.Ctx) error {
 
 	gitlabURL := "http://10.10.237.159"
-    privateToken := "glpat-bAN8gq6WTNZzKm3xgDCR"
+    privateToken := ""
 
     // Create a new GitLab client
     git, err := gitlab.NewOAuthClient(privateToken, gitlab.WithBaseURL(gitlabURL))
