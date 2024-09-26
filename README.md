@@ -23,7 +23,7 @@ Before running the project, ensure that you have the following installed:
 
 ```
 git clone https://github.com/PrashanthSai-K/DeployGenie.git
-cd container-automation
+cd DeployGenie
 ```
 
 
