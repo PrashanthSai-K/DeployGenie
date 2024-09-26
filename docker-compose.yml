@@ -28,10 +28,10 @@ services:
       context: ./ui
       dockerfile: Dockerfile
 
-  ssh-server:
-    build: 
-      context: ./ssh-server
-      dockerfile: Dockerfile
+  # ssh-server:
+  #   build: 
+  #     context: ./ssh-server
+  #     dockerfile: Dockerfile
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
