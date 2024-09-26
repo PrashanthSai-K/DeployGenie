@@ -36,8 +36,8 @@ type Containers struct {
 	Outcome       string
 	Presistent    string
 	ExpiryDate    string
-	NewUser		  string
-	NewPassword	  string
+	NewUser       string
+	NewPassword   string
 	Status        string
 	ImageId       uint
 	UserId        uint
@@ -56,6 +56,16 @@ type UsedPorts struct {
 	User        Users      `grom:"foreignKey:UserId;references:Id`
 }
 
+type Volumes struct {
+	gorm.Model
+	Id          uint `grom:"primaryKey;autoIncrement"`
+	VolumeName  string
+	ContainerId uint
+	UserId      uint
+	Container   Containers `grom:"foreignKey:ContainerId;references:Id`
+	User        Users      `grom:"foreignKey:UserId;references:Id`
+}
+
 type ContainerView struct {
 	Id            uint
 	ServiceType   string
@@ -66,12 +76,14 @@ type ContainerView struct {
 	Presistent    string
 	ExpiryDate    string
 	Status        string
-	ImageId		  uint
+	ImageId       uint
 	ImageName     string
 	ImageTag      string
 	ImageSize     string
-	UserId		  uint
-	UserEmail	  string
+	UserId        uint
+	UserEmail     string
 	UserFirstname string
 	UserLastname  string
+	VolumeId       uint
+	VolumeName    string
 }

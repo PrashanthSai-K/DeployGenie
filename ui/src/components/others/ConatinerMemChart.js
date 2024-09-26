@@ -29,9 +29,6 @@ const ContainerMemChart = ({ container_name }) => {
                     const time = parseFloat(entry[1])
                     data.push([date, time])
                 });
-
-                console.log(data);
-
                 setChartData(data);
             } catch (error) {
                 console.log(error);

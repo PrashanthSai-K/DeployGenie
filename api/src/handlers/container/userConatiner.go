@@ -215,7 +215,7 @@ func GetContainerByName(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"success":"true"});
 	}
 
-	if claims.UserId != oldContainer.UserId {
+	if claims.UserId != oldContainer.UserId && claims.Role != "ADMIN" {
 		return c.Status(fiber.StatusNotAcceptable).JSON(fiber.Map{"success":"true", "message": "Not Authorized"});
 	}
 

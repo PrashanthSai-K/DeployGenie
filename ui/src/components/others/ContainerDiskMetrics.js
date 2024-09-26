@@ -62,11 +62,7 @@ function ContainerDiskMetrics() {
                 end: endStamp,
                 step: 50,
             }
-        });
-
-        console.log(responseReads);
-        
-
+        });        
         // Assuming both TX and RX have the same length
         const dataRead = responseReads.data.data.result[0].values.map(entry => [
             new Date(entry[0] * 1000).toLocaleTimeString(),  // Time
@@ -92,9 +88,6 @@ function ContainerDiskMetrics() {
         vAxis: { minValue: 0, textStyle: { fontSize: 12 } },
         chartArea: { width: "70%", height: "60%" },
     };
-
-
-console.log(diskData);
 
     return (
         <div className='h-full w-full'>

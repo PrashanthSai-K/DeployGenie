@@ -9,7 +9,6 @@ import (
 	otherHandler "github.com/PrashanthSai-K/DeployGenie/api/src/handlers/other"
 	"github.com/PrashanthSai-K/DeployGenie/api/src/model"
 	"github.com/docker/docker/api/types/container"
-	// "github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
 	"github.com/gofiber/fiber/v2"
@@ -52,6 +51,10 @@ func CreateContainer(c *fiber.Ctx) error {
 	container.Status = "pending"
 
 	result = db.Create(container)
+	fmt.Println("Presistent: ", container.Presistent)
+	if container.Presistent == "Yes" {
+		otherHandler.CreateVolume(fmt.Sprintf("%s_%d_%s_%s", user.UserName, user.Id, time.Now().Format("2006-01-02_15-04-05"), "vol"), container.Id, user.Id)
+	}
 
 	if result.RowsAffected > 0 {
 		return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"success": "true", "message": "Request forwarded for approval successfully"})
@@ -87,13 +90,17 @@ func CreateCont(c *fiber.Ctx) error {
 	fmt.Println(containerData)
 
 	var portMap string
+	var volumeName string
 
 	if containerData.ImageId == 1 {
 		portMap = fmt.Sprintf("%d/tcp", 3306)
+		volumeName = fmt.Sprintf("%s_vol:/var/lib/mysql", containerData.ContainerName)
 	} else if containerData.ImageId == 2 {
 		portMap = fmt.Sprintf("%d/tcp", 27017)
+		volumeName = fmt.Sprintf("%s_vol:/var/lib/mongodb", containerData.ContainerName)
 	} else {
 		portMap = fmt.Sprintf("%d/tcp", 6379)
+		volumeName = fmt.Sprintf("%s_vol:/data", containerData.ContainerName)
 	}
 
 	client, err := client.NewClientWithOpts(client.FromEnv)
@@ -108,6 +115,7 @@ func CreateCont(c *fiber.Ctx) error {
 
 	dbPort := fmt.Sprintf("%d", otherHandler.GetPortNumber())
 	uiPort := fmt.Sprintf("%d", otherHandler.GetPortNumber())
+	sshPort := fmt.Sprintf("%d", otherHandler.GetPortNumber())
 
 	hostDbBinding := nat.PortBinding{
 		HostIP:   "0.0.0.0",
@@ -118,6 +126,12 @@ func CreateCont(c *fiber.Ctx) error {
 		HostIP:   "0.0.0.0",
 		HostPort: uiPort,
 	}
+
+	hostSSHBinding := nat.PortBinding{
+		HostIP:   "0.0.0.0",
+		HostPort: sshPort,
+	}
+
 	fmt.Println(containerData)
 	imageName := fmt.Sprintf("%s:%s", containerData.ImageName, containerData.ImageTag)
 	fmt.Println(imageName)
@@ -127,31 +141,44 @@ func CreateCont(c *fiber.Ctx) error {
 		Entrypoint: []string{"/bin/bash", "/root/pass.sh"},
 		Cmd:        []string{oldContainer.NewUser, oldContainer.NewPassword},
 		ExposedPorts: map[nat.Port]struct{}{
-			nat.Port(portMap):  {},
-			nat.Port("80/tcp"): {},
+			nat.Port(portMap):    {},
+			nat.Port("80/tcp"):   {},
+			nat.Port("4200/tcp"): {},
 		},
 	}
 
 	containerBinding := nat.PortMap{
-		nat.Port(portMap):  []nat.PortBinding{hostDbBinding},
-		nat.Port("80/tcp"): []nat.PortBinding{hostWebBinding},
+		nat.Port(portMap):    []nat.PortBinding{hostDbBinding},
+		nat.Port("80/tcp"):   []nat.PortBinding{hostWebBinding},
+		nat.Port("4200/tcp"): []nat.PortBinding{hostSSHBinding},
 	}
 
-	hostConfig := &container.HostConfig{
-		PortBindings: containerBinding,
-		Resources: container.Resources{
-			Memory: int64(512 * 1024 * 1024),
-		},
-		// Mounts: []mount.Mount{
-		// 	{
-		// 		Type:   mount.TypeVolume,
-		// 		Source: "volume",
-		// 		Target: "/bin/bash",
-		// 	},
-		// },
-		RestartPolicy: container.RestartPolicy{
-			Name: "unless-stopped",
-		},
+	var hostConfig *container.HostConfig
+
+	if containerData.Presistent == "Yes" {
+
+		hostConfig = &container.HostConfig{
+			PortBindings: containerBinding,
+			Resources: container.Resources{
+				Memory: int64(512 * 1024 * 1024),
+			},
+			RestartPolicy: container.RestartPolicy{
+				Name: "unless-stopped",
+			},
+			Binds: []string{
+				volumeName,
+			},
+		}
+	} else {
+		hostConfig = &container.HostConfig{
+			PortBindings: containerBinding,
+			Resources: container.Resources{
+				Memory: int64(512 * 1024 * 1024),
+			},
+			RestartPolicy: container.RestartPolicy{
+				Name: "unless-stopped",
+			},
+		}
 	}
 
 	containerName := oldContainer.ContainerName
@@ -188,15 +215,22 @@ func CreateCont(c *fiber.Ctx) error {
 
 	uiPortNo := new(model.UsedPorts)
 
+	sshPortNo := new(model.UsedPorts)
+
 	dbPortNo.ContainerId = oldContainer.Id
 	dbPortNo.Port = dbPort
-	dbPortNo.UserId = 1
+	dbPortNo.UserId = oldContainer.UserId
 	dbPortNo.PortUsage = "DB"
 
 	uiPortNo.ContainerId = oldContainer.Id
 	uiPortNo.Port = uiPort
-	uiPortNo.UserId = 1
+	uiPortNo.UserId = oldContainer.UserId
 	uiPortNo.PortUsage = "UI"
+
+	sshPortNo.ContainerId = oldContainer.Id
+	sshPortNo.Port = sshPort
+	sshPortNo.UserId = oldContainer.UserId
+	sshPortNo.PortUsage = "WEB SSH"
 
 	insert := db.Create(&dbPortNo)
 	fmt.Println("DB : ", insert.RowsAffected)
@@ -206,6 +240,13 @@ func CreateCont(c *fiber.Ctx) error {
 
 	insert = db.Create(&uiPortNo)
 	fmt.Println("UI : ", insert.RowsAffected)
+
+	if insert.RowsAffected == 0 {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"success": "false", "message": "Error during creation"})
+	}
+
+	insert = db.Create(&sshPortNo)
+	fmt.Println("VNC : ", insert.RowsAffected)
 
 	if insert.RowsAffected == 0 {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"success": "false", "message": "Error during creation"})

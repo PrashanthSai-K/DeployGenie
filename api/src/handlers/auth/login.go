@@ -152,7 +152,7 @@ func GetUser(c *fiber.Ctx) error {
 	fmt.Println(claim.Valid)
 
 	if err != nil || !claim.Valid {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Invalid Authhhhhhhhh token"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Invalid Auth token"})
 	}
 
 	return c.Status(fiber.StatusAccepted).JSON(fiber.Map{"success": "true", "claims": jwtClaims})

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import AdminSidebar from '../navbar/AdminSidebar'
 import { adminGetRequest, adminPostRequest, ErrorNotify, getRequest, postRequest, SuccessNotify } from '../others/extras';
+import ApprovalPopup from '../others/ApprovalPopup';
 
 function AdminUsersManage() {
 
@@ -18,6 +19,7 @@ function AdminUsersManage() {
     // <<<<----------Table Menu functianlity----------------------->>>>
     const [dropdownVisible, setDropdownVisible] = useState(null);
     const dropdownRef = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleActionClick = (event, userId) => {
         event.stopPropagation();
@@ -109,7 +111,7 @@ function AdminUsersManage() {
     useEffect(() => {
         fetchUsers();
     }, [])
-    
+
 
     useEffect(() => {
         document.addEventListener('click', handleClickOutside);
@@ -118,6 +120,10 @@ function AdminUsersManage() {
         };
     }, []);
 
+    const [approvePopupVisible, setApprovePopupVisible] = useState(false);
+    const [callbackFunction, setCallbackFunction] = useState(null);
+    const [stage, setStage] = useState("");
+    const [popupData, setPopupData] = useState({});
 
     return (
         <>
@@ -125,6 +131,15 @@ function AdminUsersManage() {
 
             {message ? <SuccessNotify message={message} /> : null}
             {error ? <ErrorNotify message={error} /> : null}
+
+            {/* Approval Modal */}
+            <ApprovalPopup
+                isVisible={approvePopupVisible}
+                setIsvisible={setApprovePopupVisible}
+                stage={stage}
+                callbackFunction={callbackFunction}
+                data={popupData}
+            />
 
             <div className='ml-2  sm:ml-72 mt-24'>
                 <div className='bg-gray-300 p-1  rounded-lg mr-2 flex items-center gap-2'>
@@ -283,46 +298,7 @@ function AdminUsersManage() {
                                                             </div>
                                                         }
                                                     </td>
-                                                    {/* <td class="px-4 py-3 text-center ">
-                                                        <div className='relative flex gap-2 items-center justify-center'>
-                                                            <button
-                                                                className='px-3 py-1 rounded-lg border-blue-400 border bg-blue-400 text-white hover:bg-blue-500'
-                                                            >
-                                                                View
-                                                            </button>
-                                                            {user.Status == "ACTIVE" &&
-                                                                <button
-                                                                    className='px-3 py-1 rounded-lg border-orange-400 border bg-orange-400 text-white hover:bg-orange-500'
-                                                                    onClick={() => InactiveUser(user)}
-                                                                >
-                                                                    Inactive
-                                                                </button>
-                                                            }
-                                                            {user.Status == "INACTIVE" &&
-                                                                <button
-                                                                    className='px-3 py-1 rounded-lg border-green-400 border bg-green-400 text-white hover:bg-green-500'
-                                                                    onClick={() => ApproveUser(user)}
-                                                                >
-                                                                    Active
-                                                                </button>}
-                                                            {user.Status === "PENDING" &&
-                                                                <>
-                                                                    <button
-                                                                        className='px-3 py-1 rounded-lg border-green-400 border bg-green-400 text-white hover:bg-green-500'
-                                                                        onClick={() => ApproveUser(user)}
-                                                                    >
-                                                                        Approve
-                                                                    </button>
-                                                                    <button
-                                                                        className='px-3 py-1 rounded-lg border-red-400 border bg-red-400 text-white hover:bg-red-500'
-                                                                        onClick={() => RejectUser(user)}
-                                                                    >
-                                                                        Reject
-                                                                    </button>
-                                                                </>
-                                                            }
-                                                        </div>
-                                                    </td> */}
+
                                                     <td class=" relative px-4 py-3 flex items-center ">
                                                         <button
                                                             data-dropdown-toggle="apple-imac-27-dropdown"
@@ -343,26 +319,58 @@ function AdminUsersManage() {
                                                                     </li>
                                                                     {
                                                                         user.Status === "ACTIVE" &&
-                                                                        <li onClick={() => InactiveUser(user)} >
-                                                                            <a href="#" class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Inactivate</a>
+                                                                        <li
+                                                                            class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                                            onClick={() => {
+                                                                                setCallbackFunction(() => InactiveUser)
+                                                                                setApprovePopupVisible(true)
+                                                                                setPopupData(user)
+                                                                                setStage("inactivate user")
+                                                                                setDropdownVisible(null)
+                                                                            }} >
+                                                                            Inactivate
                                                                         </li>
                                                                     }
                                                                     {
                                                                         user.Status === "INACTIVE" &&
-                                                                        <li onClick={() => ApproveUser(user)} >
-                                                                            <a href="#" class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Activate</a>
+                                                                        <li
+                                                                            class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                                            onClick={() => {
+                                                                                setCallbackFunction(() => ApproveUser)
+                                                                                setApprovePopupVisible(true)
+                                                                                setPopupData(user)
+                                                                                setStage("Activate user")
+                                                                                setDropdownVisible(null)
+                                                                            }} >
+                                                                            Active
                                                                         </li>
                                                                     }
                                                                     {
                                                                         user.Status === "PENDING" &&
-                                                                        <li onClick={() => ApproveUser(user)}>
-                                                                            <a href="#" class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Approve</a>
+                                                                        <li
+                                                                            class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                                            onClick={() => {
+                                                                                setCallbackFunction(() => ApproveUser)
+                                                                                setApprovePopupVisible(true)
+                                                                                setPopupData(user)
+                                                                                setStage("approve user")
+                                                                                setDropdownVisible(null)
+                                                                            }} >
+                                                                            Approve
                                                                         </li>
                                                                     }
                                                                     {
                                                                         user.Status === "PENDING" &&
-                                                                        <li onClick={() => RejectUser(user)} >
-                                                                            <a href="#" class="block py-1 px-4 rounded-lg text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Reject</a>
+                                                                        <li
+                                                                            class="block py-1 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                                            onClick={() => {
+                                                                                setCallbackFunction(() => RejectUser)
+                                                                                setApprovePopupVisible(true)
+                                                                                setPopupData(user)
+                                                                                setStage("reject user")
+                                                                                setDropdownVisible(null)
+                                                                            }} >
+                                                                            Reject
                                                                         </li>
                                                                     }
                                                                 </ul>

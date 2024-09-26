@@ -29,9 +29,6 @@ const ContainerCPUChart = ({ container_name }) => {
                     const time = parseFloat(entry[1])
                     data.push([date, time])
                 });
-
-                console.log(data);
-
                 setChartData(data);
             } catch (error) {
                 console.log(error);
@@ -69,8 +66,6 @@ const ContainerCPUChart = ({ container_name }) => {
         },
         chartArea: { width: "70%", height: "60%" },
     };
-
-    console.log(chartData);
 
 
     return (

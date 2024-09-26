@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { adminGetRequest } from '../others/extras';
 
 function AdminSidebar() {
 
@@ -22,6 +23,17 @@ function AdminSidebar() {
   }
 
   const navigate = useNavigate();
+  const [admin, setAdmin] = useState();
+
+  const getAdmin = async () => {
+      try {
+          const response = await adminGetRequest("/v1/api/auth/user");          
+          localStorage.setItem('Admin', JSON.stringify(response.data.claims));
+          setAdmin(response.data.claims);
+      } catch (error) {
+          console.log(error);
+      }
+  }
 
   const validate = () => {
     const token = localStorage.getItem("adminKey")
@@ -31,6 +43,7 @@ function AdminSidebar() {
   }
 
   useEffect(() => {
+    getAdmin();
     validate();
   }, [])
 
@@ -39,6 +52,7 @@ function AdminSidebar() {
     navigate("/")
   }
 
+  if(!admin) return null
 
   return (
     <>
@@ -46,7 +60,6 @@ function AdminSidebar() {
         <div className='flex bg-dark-blue w-full h-full rounded-2xl items-center justify-between p-5'>
           <div className=' flex items-center justify-center gap-3'>
             <div
-              // className=''
               data-drawer-target="side-bar"
               data-drawer-toggle="side-bar"
               aria-controls="side-bar"
@@ -75,8 +88,8 @@ function AdminSidebar() {
                 </svg>
 
               </div>
-              <p className='text-center'>Sai K</p>
-              <p className='text-gray-400 text-xs text-center' title='hariharan.cs21@bitsathy.ac.in'>sai@gamil.com</p>
+              <p className='text-center'>{admin.UserFirstname} {admin.UserLastname}</p>
+              <p className='text-gray-400 text-xs text-center' title='hariharan.cs21@bitsathy.ac.in'>{admin.UserEmail}</p>
               <div className='w-full pt-2 border-b border-dark-blue'></div>
               <div className='pl-3' data-popover="popover">
                 <button className='text-gray-600 text-sm pt-3 flex items-center  gap-2 '>
@@ -136,7 +149,7 @@ function AdminSidebar() {
                 <span className="ml-3">Container</span>
               </div>
               {dropDown && <ul className='ml-12 flex flex-col gap-2 pt-2'>
-                <li
+                {/* <li
                   className='flex items-center gap-1 cursor-pointer hover:text-gray-400 '
                   onClick={() => navigate("/admin/container/new")}
                 >
@@ -144,7 +157,7 @@ function AdminSidebar() {
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                   </svg>
                   <span>New Container</span>
-                </li>
+                </li> */}
                 <li
                   className='flex items-center gap-1 cursor-pointer hover:text-gray-400 '
                   onClick={() => navigate("/admin/container/manage")}
@@ -158,6 +171,7 @@ function AdminSidebar() {
             </li>
             <li
               className='flex items-center p-2 rounded-lg hover:text-gray-400 cursor-pointer'
+              onClick={() => navigate("/admin/images")}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-archive" viewBox="0 0 16 16">
                 <path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5zm13-3H1v2h14zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5" />
