@@ -10,6 +10,25 @@ const ContainerCPUChart = ({ container_name }) => {
     const now = new Date();
     const endStamp = now.getTime() / 1000;
     const startStamp = endStamp - 5 * 60;
+
+    const convertToAmPm = (timeStr) => {
+        let [hours, minutes] = timeStr.split(":");
+        let amPm = "AM";
+        hours = parseInt(hours);
+        
+        if (hours >= 12) {
+          amPm = "PM";
+          if (hours > 12) {
+            hours -= 12;
+          }
+        } else if (hours === 0) {
+          hours = 12;
+        }
+      
+        return `${hours}:${minutes} ${amPm}`;
+      };
+
+
     useEffect(() => {
 
         const fetchData = async () => {
@@ -25,7 +44,7 @@ const ContainerCPUChart = ({ container_name }) => {
                 const result = response.data.data.result[0].values;
                 var data = [["time", "usage"]];
                 result.map(entry => {
-                    const date = new Date(entry[0] * 1000).toLocaleTimeString()
+                    const date = convertToAmPm(new Date(entry[0] * 1000).toLocaleTimeString())
                     const time = parseFloat(entry[1])
                     data.push([date, time])
                 });

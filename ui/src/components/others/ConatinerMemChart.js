@@ -11,9 +11,27 @@ const ContainerMemChart = ({ container_name }) => {
     const endStamp = now.getTime() / 1000; // Convert to seconds
     const startStamp = endStamp - 5 * 60; // 5 minutes ago in seconds
 
+    const convertToAmPm = (timeStr) => {
+        let [hours, minutes] = timeStr.split(":");
+        let amPm = "AM";
+        hours = parseInt(hours);
+        
+        if (hours >= 12) {
+          amPm = "PM";
+          if (hours > 12) {
+            hours -= 12;
+          }
+        } else if (hours === 0) {
+          hours = 12;
+        }
+      
+        return `${hours}:${minutes} ${amPm}`;
+      };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
+
                 const response = await axios.get(`http://localhost:9090/api/v1/query_range`, {
                     params: {
                         query: `rate(container_memory_usage_bytes{name="${container_name}"}[5m])`,
@@ -22,13 +40,18 @@ const ContainerMemChart = ({ container_name }) => {
                         step: 50,
                     }
                 });
+                console.log(response.data.data.result[0].values);
+                
                 const result = response.data.data.result[0].values;
+                
                 var data = [["time", "usage"]];
                 result.map(entry => {
-                    const date = new Date(entry[0] * 1000).toLocaleTimeString()
-                    const time = parseFloat(entry[1])
+                    const date = convertToAmPm(new Date(entry[0] * 1000).toLocaleTimeString())
+                    const time = parseFloat(entry[1]/(1024*1024))
                     data.push([date, time])
                 });
+                console.log(data);
+
                 setChartData(data);
             } catch (error) {
                 console.log(error);
@@ -56,13 +79,15 @@ const ContainerMemChart = ({ container_name }) => {
             textStyle: {
                 fontSize: 12,
             },
+            format: "h:mm:s a"
         },
         vAxis: {
             minValue: 0,
-            maxValue: 5000000,
+            maxValue: 500,
             textStyle: {
                 fontSize: 12,
             },
+            format: "# MB"
         },
         chartArea: { width: "70%", height: "60%" },
     };

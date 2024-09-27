@@ -22,6 +22,9 @@ services:
       DB_USER: root
       DB_PASSWORD: password
       DB_PORT: 3306
+      DOCKER_HOST: unix:///var/run/docker.sock
+      JWTSECRET: secret_key
+
 
   ui:
     build:

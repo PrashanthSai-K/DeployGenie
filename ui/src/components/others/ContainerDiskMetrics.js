@@ -11,6 +11,22 @@ function ContainerDiskMetrics() {
     const endStamp = now.getTime() / 1000;
     const startStamp = endStamp - 5 * 60;
 
+    const convertToAmPm = (timeStr) => {
+        let [hours, minutes] = timeStr.split(":");
+        let amPm = "AM";
+        hours = parseInt(hours);
+        
+        if (hours >= 12) {
+          amPm = "PM";
+          if (hours > 12) {
+            hours -= 12;
+          }
+        } else if (hours === 0) {
+          hours = 12;
+        }
+      
+        return `${hours}:${minutes} ${amPm}`;
+      };
 
     const fetchNetworkData = async () => {
         const responseTX = await axios.get(`http://localhost:9090/api/v1/query_range`, {
@@ -32,7 +48,7 @@ function ContainerDiskMetrics() {
         
         // Assuming both TX and RX have the same length
         const dataTX = responseTX.data.data.result[0].values.map(entry => [
-            new Date(entry[0] * 1000).toLocaleTimeString(),  // Time
+            convertToAmPm(new Date(entry[0] * 1000).toLocaleTimeString()),  // Time
             parseFloat(entry[1])  // TX value
         ]);
 
@@ -65,7 +81,7 @@ function ContainerDiskMetrics() {
         });        
         // Assuming both TX and RX have the same length
         const dataRead = responseReads.data.data.result[0].values.map(entry => [
-            new Date(entry[0] * 1000).toLocaleTimeString(),  // Time
+            convertToAmPm(new Date(entry[0] * 1000).toLocaleTimeString()),  // Time
             parseFloat(entry[1])  // TX value
         ]);
 

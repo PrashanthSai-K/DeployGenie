@@ -103,7 +103,7 @@ func CreateCont(c *fiber.Ctx) error {
 		volumeName = fmt.Sprintf("%s_vol:/data", containerData.ContainerName)
 	}
 
-	client, err := client.NewClientWithOpts(client.FromEnv)
+	client, err := client.NewClientWithOpts(client.WithHostFromEnv())
 
 	if err != nil {
 		panic(err)
