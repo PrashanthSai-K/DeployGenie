@@ -2,15 +2,14 @@ package database
 
 import (
 	"fmt"
-
 	"github.com/PrashanthSai-K/DeployGenie/api/config"
 	"github.com/PrashanthSai-K/DeployGenie/api/src/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
 
+var DB *gorm.DB
 func ConnectDB() {
 
 	var err error
