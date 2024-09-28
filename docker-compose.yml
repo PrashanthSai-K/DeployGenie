@@ -27,7 +27,6 @@ services:
       DOCKER_HOST: unix:///var/run/docker.sock
       JWTSECRET: secret_key
 
-
   ui:
     build:
       context: ./ui
@@ -60,7 +59,25 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
 
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: deploy
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3306"
+
+  phymyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PMA_HOST: mysql
+
 networks:
   default:
     driver: bridge
-
