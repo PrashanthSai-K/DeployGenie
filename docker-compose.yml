@@ -16,6 +16,8 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       DB_HOST: 10.30.10.12
       DB_NAME: deploy

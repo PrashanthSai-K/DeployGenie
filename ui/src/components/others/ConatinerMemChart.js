@@ -55,7 +55,6 @@ const ContainerMemChart = ({ container_name }) => {
                 setChartData(data);
             } catch (error) {
                 console.log(error);
-
             }
         }
         fetchData();

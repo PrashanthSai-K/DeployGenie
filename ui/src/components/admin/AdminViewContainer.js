@@ -217,7 +217,7 @@ function AdminViewContainer() {
                     <ContainerMemChart container_name={cont_name.name} />
                 </div>
                 <div className='flex flex-col lg:flex-row items-center lg:justify-center lg:gap-6 min-h-96 w-full'>
-                    <ContainerDiskMetrics />
+                    <ContainerDiskMetrics container_name={cont_name.name} />
                 </div>
                 <section class="pt-5 dark:bg-gray-900 w-full h-full pr-3">
                     <div class="mx-auto max-w-screen ">
