@@ -8,8 +8,8 @@ services:
       - "4000:80"
     volumes:
       - ./nginx/.nginx.conf:/etc/nginx/conf.d/default.conf
+    restart: always
     depends_on:
-      - api
       - ui
 
   api:
@@ -26,16 +26,17 @@ services:
       DB_PORT: 3306
       DOCKER_HOST: unix:///var/run/docker.sock
       JWTSECRET: secret_key
+    restart: always
+    depends_on:
+      - mysql
 
   ui:
     build:
       context: ./ui
       dockerfile: Dockerfile
-
-  # ssh-server:
-  #   build: 
-  #     context: ./ssh-server
-  #     dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - api
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -58,6 +59,8 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
+    depends_on:
+      - cadvisor
 
   mysql:
     image: mysql

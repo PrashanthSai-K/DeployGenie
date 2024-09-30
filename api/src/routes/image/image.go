@@ -14,4 +14,6 @@ func SetUPImageRoutes (router fiber.Router) {
 
 	image.Post("/:id", imageHandler.UpdateImage);
 
+	image.Get("/sync", imageHandler.SyncImages);
+
 }

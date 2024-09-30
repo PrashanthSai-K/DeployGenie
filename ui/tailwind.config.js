@@ -3,30 +3,33 @@ module.exports = {
   content: ["./src/**/*.{html,js}"],
   theme: {
     extend: {
-      colors:{
+      colors: {
         'dark-blue': '#031C30',
 
       },
-      height:{
-        '89':'89%',
+      height: {
+        '89': '89%',
       },
-      fontSize:{
-        'xxs' : '0.5rem',
-        'xms' : '0.7rem',
+      fontSize: {
+        'xxs': '0.5rem',
+        'xms': '0.7rem',
       },
       animation: {
-            shimmer: "shimmer 2s linear infinite"
+        shimmer: "shimmer 2s linear infinite"
+      },
+      "keyframes": {
+        shimmer: {
+          from: {
+            "backgroundPosition": "0 0"
           },
-          "keyframes": {
-            shimmer: {
-              from: {
-                "backgroundPosition": "0 0"
-              },
-              to: {
-                "backgroundPosition": "-200% 0"
-              }
-            }
+          to: {
+            "backgroundPosition": "-200% 0"
           }
+        }
+      },
+      transitionDuration: {
+        DEFAULT: '500ms',  
+      },
     },
   },
   plugins: [],

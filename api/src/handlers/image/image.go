@@ -1,10 +1,13 @@
 package imageHandler
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/PrashanthSai-K/DeployGenie/api/database"
 	"github.com/PrashanthSai-K/DeployGenie/api/src/model"
+	"github.com/docker/docker/api/types/image"
+	"github.com/docker/docker/client"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -75,4 +78,33 @@ func UpdateImage(c *fiber.Ctx) error {
     }
 
 	return c.JSON(fiber.Map{"success":"true", });
+}
+
+
+func SyncImages(c *fiber.Ctx) error{
+
+	client, err := client.NewClientWithOpts(client.FromEnv)
+
+	if err != nil {
+		fmt.Println("Error creating Docker client:", err)
+	}
+
+	db := database.DB
+
+	var images []model.Images
+
+	result := db.Find(&images)
+
+	if result.Error != nil {
+		fmt.Println("Error fetching images from DB:", result.Error)
+	}
+
+	for _, img := range images {
+		imageName := fmt.Sprintf("%s:%s", img.ImageName, img.Tag)
+		if _, err := client.ImagePull(context.Background(), imageName, image.PullOptions{}); err != nil {
+			fmt.Println("Error pulling images", err)
+		}
+	}
+
+	return c.JSON(fiber.Map{"success":"true", "message":"Images synced successfully"})
 }
