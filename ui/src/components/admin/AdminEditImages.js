@@ -1,29 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { adminPostRequest } from '../others/extras';
 
-function AdminEditImages({isVisible, setIsVisible, setMessage, setError, clearNotify }){
+function AdminEditImages({isVisible, setIsVisible, editImageData, setMessage, setError, clearNotify, fetchImages }){
 
     const data = {
         ImageName: "",
         Tag:"",
         Size: "",
-    }
+    }    
 
-    const [formData, setFormData] = useState(data);
+    const [formData, setFormData] = useState(editImageData);
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
     
-    const handleSubmit = (e) => {
+    useEffect(() => {
+        setFormData(editImageData);
+    }, [editImageData])    
+
+    const handleSubmit = async(e) => {
         try {
             e.preventDefault();
-            console.log(formData);
+            const response = await adminPostRequest(`/v1/api/images/${formData.Id}`, formData)
             setFormData(data);
+            fetchImages();
             setIsVisible(false);
             setMessage("Image updated successfully");
             clearNotify();
         } catch (error) {
             console.log(error);
+            setIsVisible(false);
             setError("Failed to update image");
             clearNotify();
         }

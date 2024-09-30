@@ -10,4 +10,8 @@ func SetUPImageRoutes (router fiber.Router) {
 
 	image.Get("/", imageHandler.GetImages);
 
+	image.Post("/", imageHandler.CreateImage);
+
+	image.Post("/:id", imageHandler.UpdateImage);
+
 }

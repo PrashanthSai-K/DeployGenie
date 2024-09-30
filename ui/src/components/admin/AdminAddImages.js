@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
+import { adminPostRequest } from '../others/extras';
 
-function AdminAddImages({isVisible, setIsVisible, setMessage, setError, clearNotify }){
+function AdminAddImages({isVisible, setIsVisible, setMessage, setError, clearNotify, fetchImages }){
 
     const data = {
         ImageName: "",
@@ -14,16 +15,18 @@ function AdminAddImages({isVisible, setIsVisible, setMessage, setError, clearNot
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         try {
             e.preventDefault();
-            console.log(formData);
+            const response = await adminPostRequest("/v1/api/images", formData)
             setFormData(data);
+            fetchImages();
             setIsVisible(false);
             setMessage("Image added successfully");
             clearNotify();
         } catch (error) {
             console.log(error);
+            setIsVisible(false);
             setError("Failed to add image");
             clearNotify();
         }
