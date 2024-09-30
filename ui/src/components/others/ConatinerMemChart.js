@@ -40,7 +40,6 @@ const ContainerMemChart = ({ container_name }) => {
                         step: 50,
                     }
                 });
-                console.log(response.data.data.result[0].values);
                 
                 const result = response.data.data.result[0].values;
                 
@@ -50,7 +49,6 @@ const ContainerMemChart = ({ container_name }) => {
                     const time = parseFloat(entry[1]/(1024*1024))
                     data.push([date, time])
                 });
-                console.log(data);
 
                 setChartData(data);
             } catch (error) {

@@ -35,7 +35,7 @@ services:
       context: ./ui
       dockerfile: Dockerfile
     environment:
-      HOST_IP: 10.10.237.159
+      REACT_APP_HOST_IP: 10.10.237.159
     restart: always
     depends_on:
       - api

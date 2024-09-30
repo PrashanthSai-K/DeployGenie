@@ -10,8 +10,6 @@ function ApprovalPopup({stage, callbackFunction, data,  isVisible, setIsvisible}
     const handleNo = () => {
         setIsvisible(false);
     }  
-
-    console.log(data);
     
     if (!isVisible) return null;
 

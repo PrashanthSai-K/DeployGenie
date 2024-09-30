@@ -46,7 +46,6 @@ function ContainerDiskMetrics({container_name}) {
                     step: 50,
                 }
             });
-            console.log(responseRX);
             
             // Assuming both TX and RX have the same length
             const dataTX = responseTX.data.data.result[0].values.map(entry => [

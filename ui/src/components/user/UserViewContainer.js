@@ -493,17 +493,17 @@ function UserViewContainer() {
                                                         </td>
                                                         <td class="px-4 py-3 ">
                                                             {port.PortUsage == "DB" &&
-                                                                <div> {`IP : ${process.env.HOST_IP}, Port : ${port.Port}`}</div>
+                                                                <div> {`IP : ${process.env.REACT_APP_HOST_IP}, Port : ${port.Port}`}</div>
                                                             }
                                                             {port.PortUsage == "UI" ?
                                                                 containerData.ImageName == "prashanthks/mysql_image" ?
-                                                                    <a target='blank' href={`http://${process.env.HOST_IP}:${port.Port}/phpmyadmin`}> {`http://${process.env.HOST_IP}:${port.Port}/phpmyadmin`}</a>
-                                                                    : <a target='blank' href={`http://${process.env.HOST_IP}:${port.Port}/`}> {`http://${process.env.HOST_IP}:${port.Port}`}</a>
+                                                                    <a target='blank' href={`http://${process.env.REACT_APP_HOST_IP}:${port.Port}/phpmyadmin`}> {`http://${process.env.REACT_APP_HOST_IP}:${port.Port}/phpmyadmin`}</a>
+                                                                    : <a target='blank' href={`http://${process.env.REACT_APP_HOST_IP}:${port.Port}/`}> {`http://${process.env.REACT_APP_HOST_IP}:${port.Port}`}</a>
                                                                 : ""
                                                             }
                                                             {
                                                                 port.PortUsage == "WEB SSH" &&
-                                                                <a target='blank' href={`http://${process.env.HOST_IP}:${port.Port}`}>{`http://${process.env.HOST_IP}:${port.Port}`}</a>
+                                                                <a target='blank' href={`http://${process.env.REACT_APP_HOST_IP}:${port.Port}`}>{`http://${process.env.REACT_APP_HOST_IP}:${port.Port}`}</a>
                                                             }
                                                         </td>
                                                     </tr>
