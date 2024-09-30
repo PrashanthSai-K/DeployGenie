@@ -493,17 +493,17 @@ function UserViewContainer() {
                                                         </td>
                                                         <td class="px-4 py-3 ">
                                                             {port.PortUsage == "DB" &&
-                                                                <div> {`IP : 10.10.237.157, Port : ${port.Port}`}</div>
+                                                                <div> {`IP : ${process.env.HOST_IP}, Port : ${port.Port}`}</div>
                                                             }
                                                             {port.PortUsage == "UI" ?
                                                                 containerData.ImageName == "prashanthks/mysql_image" ?
-                                                                    <a target='blank' href={`http://10.10.237.157:${port.Port}/phpmyadmin`}> {`http://10.10.237.157:${port.Port}/phpmyadmin`}</a>
-                                                                    : <a target='blank' href={`http://10.10.237.157:${port.Port}/`}> {`http://10.10.237.157:${port.Port}`}</a>
+                                                                    <a target='blank' href={`http://${process.env.HOST_IP}:${port.Port}/phpmyadmin`}> {`http://${process.env.HOST_IP}:${port.Port}/phpmyadmin`}</a>
+                                                                    : <a target='blank' href={`http://${process.env.HOST_IP}:${port.Port}/`}> {`http://${process.env.HOST_IP}:${port.Port}`}</a>
                                                                 : ""
                                                             }
                                                             {
                                                                 port.PortUsage == "WEB SSH" &&
-                                                                <a target='blank' href={`http://10.10.237.157:${port.Port}`}>{`http://10.10.237.157:${port.Port}`}</a>
+                                                                <a target='blank' href={`http://${process.env.HOST_IP}:${port.Port}`}>{`http://${process.env.HOST_IP}:${port.Port}`}</a>
                                                             }
                                                         </td>
                                                     </tr>

@@ -34,6 +34,8 @@ services:
     build:
       context: ./ui
       dockerfile: Dockerfile
+    environment:
+      HOST_IP: 10.10.237.159
     restart: always
     depends_on:
       - api
